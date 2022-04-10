@@ -26,6 +26,11 @@ class Play extends Phaser.Scene {
         // create rocket
         this.p1Rocket = new Rocket(this, game.config.width / 2, game.config.height - borderUISize - borderPadding, "rocket").setOrigin(0, 0);
 
+        // create spaceshipts
+        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0, 0);
+        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
+        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);
+
         // set keycodes
         keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
@@ -39,5 +44,34 @@ class Play extends Phaser.Scene {
 
         // update rocket
         this.p1Rocket.update()
+
+        // update spaceshipts
+        this.ship01.update();
+        this.ship02.update();
+        this.ship03.update();
+
+        // collision detection
+        if(this.checkCollision(this.p1Rocket, this.ship01)) {
+            console.log("Ship 1 blown up");
+        }
+        if(this.checkCollision(this.p1Rocket, this.ship02)) {
+            console.log("Ship 2 blwon up");
+        }
+        if(this.checkCollision(this.p1Rocket, this.ship03)) {
+            console.log("Ship 3 blwon up");
+        }
+    }
+
+    checkCollision(rocket, ship)
+    {
+        if(rocket.x < ship.x + ship.width &&
+           rocket.x + rocket.width > ship.x &&
+           rocket.y < ship.y + ship.height &&
+           rocket.y + rocket.height > ship.height) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
