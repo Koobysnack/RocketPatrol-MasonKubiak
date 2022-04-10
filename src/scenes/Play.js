@@ -4,10 +4,13 @@ class Play extends Phaser.Scene {
     }
 
     preload() {
-        // load images/tiles sprites
+        // load visual assets
         this.load.image("rocket", "./assets/rocket.png");
         this.load.image("spaceship", "./assets/spaceship.png");
         this.load.image("starfield", "./assets/starfield.png");
+        this.load.spritesheet("explosion", "./assets/explosion.png", {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+
+        
     }
 
     create() {
@@ -36,6 +39,12 @@ class Play extends Phaser.Scene {
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+
+        this.anims.create({
+            key: "explode",
+            frames: this.anims.generateFrameNumbers("explosion", { start: 0, end: 9, first: 0}),
+            frameRate: 30
+        });
     }
 
     update() {
@@ -52,13 +61,16 @@ class Play extends Phaser.Scene {
 
         // collision detection
         if(this.checkCollision(this.p1Rocket, this.ship01)) {
-            console.log("Ship 1 blown up");
+            this.p1Rocket.reset();
+            this.shipExplode(this.ship01);
         }
         if(this.checkCollision(this.p1Rocket, this.ship02)) {
-            console.log("Ship 2 blwon up");
+            this.p1Rocket.reset();
+            this.shipExplode(this.ship02);
         }
         if(this.checkCollision(this.p1Rocket, this.ship03)) {
-            console.log("Ship 3 blwon up");
+            this.p1Rocket.reset();
+            this.shipExplode(this.ship03);
         }
     }
 
@@ -74,4 +86,16 @@ class Play extends Phaser.Scene {
             return false;
         }
     }
+
+    shipExplode(ship) {
+        ship.alpha = 0;                         
+        
+        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
+        boom.anims.play('explode');
+        boom.on('animationcomplete', () => {
+            ship.reset();
+            ship.alpha = 1;
+            boom.destroy();
+        });       
+      }
 }
